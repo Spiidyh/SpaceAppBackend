@@ -34,7 +34,7 @@ import java.util.Collections;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-
+    @Autowired
     AuthenticationManager authenticationManager;
 
     @Autowired
