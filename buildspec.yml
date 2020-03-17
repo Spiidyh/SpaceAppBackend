@@ -1,10 +1,9 @@
 version: 0.2
 
-env:
-  variables:
-    JAVA_HOME: "/usr/lib/jvm/java-8-openjdk-amd64"
 phases:
   install:
+    runtime-versions:
+      java: corretto11
     commands:
       - echo installing maven...
       - apt-get update -y
@@ -13,11 +12,12 @@ phases:
       commands:
         - echo building spaceapp backend
         - mvn install
+    post_build:
+       commands:
+         - mvn package
 artifacts:
   files:
     - target/*.jar
-    - scripts/*.sh
-    - appspec.yml
   discard-paths: yes
 
 cache:
