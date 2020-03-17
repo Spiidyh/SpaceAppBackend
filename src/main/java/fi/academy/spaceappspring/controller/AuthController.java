@@ -1,6 +1,8 @@
 package fi.academy.spaceappspring.controller;
 
 
+import com.amazonaws.services.sns.AmazonSNSClient;
+import com.amazonaws.services.sns.AmazonSNSClientBuilder;
 import fi.academy.spaceappspring.exception.AppException;
 import fi.academy.spaceappspring.model.Role;
 import fi.academy.spaceappspring.model.RoleName;
@@ -34,6 +36,8 @@ import java.util.Collections;
 @RequestMapping("/api/auth")
 public class AuthController {
 
+    private AmazonSNSClient snsClient;
+
     @Autowired
     AuthenticationManager authenticationManager;
 
@@ -48,6 +52,10 @@ public class AuthController {
 
     @Autowired
     JwtTokenProvider tokenProvider;
+
+    public AuthController() {
+        this.snsClient = (AmazonSNSClient) AmazonSNSClientBuilder.standard().build();
+    }
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -76,6 +84,12 @@ public class AuthController {
             return new ResponseEntity(new ApiResponse(false, "Email Address already in use!"),
                     HttpStatus.BAD_REQUEST);
         }
+
+        //Send email to Admin on new user creation
+        snsClient.publish("arn:aws:sns:eu-west-2:194825235352:Samuli-signup-topic",
+                "A new user has been created. User details: \nName: " +signUpRequest.getName() +
+                "\nEmail: " + signUpRequest.getEmail() + "\nUsername: " + signUpRequest.getUsername(),
+                "New user has been created in Space App");
 
         // Creating user's account
         User user = new User(signUpRequest.getName(), signUpRequest.getUsername(),
