@@ -17,7 +17,7 @@ phases:
          - mvn package
 artifacts:
   files:
-    - target/*.jar
+    - '**/*.jar'
   discard-paths: yes
 
 cache:
