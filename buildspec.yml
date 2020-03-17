@@ -12,5 +12,5 @@ phases:
         - mvn package
 artifacts:
   files:
-    - target/spaceappspring-0.0.1-SNAPSHOT.jar
+    - target/*.jar
   discard-paths: yes
